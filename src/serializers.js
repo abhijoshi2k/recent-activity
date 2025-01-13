@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2020 James George
- * Copyright (c) 2021 The Readme-Workflows organisation and Contributors
+ * Copyright (c) 2023 The Readme-Workflows organisation and Contributors
  */
 
 const { disabled_events } = require("./config");
@@ -9,6 +9,7 @@ const { disabled_events } = require("./config");
 const IssueCommentEvent = require("./events/IssueCommentEvent");
 const CommitCommentEvent = require("./events/CommitCommentEvent");
 const PullRequestReviewCommentEvent = require("./events/PullRequestReviewCommentEvent");
+const PushEvent = require("./events/PushEvent");
 const IssuesEvent = require("./events/IssuesEvent");
 const PullRequestEvent = require("./events/PullRequestEvent");
 const CreateEvent = require("./events/CreateEvent");
@@ -25,6 +26,10 @@ if (!disabled_events.includes("comments")) {
   serializers.IssueCommentEvent = IssueCommentEvent;
   serializers.CommitCommentEvent = CommitCommentEvent;
   serializers.PullRequestReviewCommentEvent = PullRequestReviewCommentEvent;
+}
+
+if (!disabled_events.includes("push")) {
+  serializers.PushEvent = PushEvent;
 }
 
 if (!disabled_events.includes("issues")) {

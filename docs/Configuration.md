@@ -37,7 +37,7 @@ jobs:
     name: Update Profile README
 
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3
       #
       # "{version}" is a placeholder and should be replaced with the latest release of recent-activity
       - uses: Readme-Workflows/recent-activity@{version}
@@ -85,6 +85,8 @@ The `Settings` area contains various settings to configure.
 - [`date.timezone`](#datetimezone)
 - [`date.text`](#datetext)
 - [`date.format`](#dateformat)
+- [`line_prefix`](#line_prefix)
+- [`ignored_repos`](#ignored_repos)
 
 #### `username`
 > **Default:** Repository Owner
@@ -159,18 +161,24 @@ The setting can be used in two ways:
 ##### Supported Events
 The following list of events is supported for the [`disabled_events`](#disabled_events) and [`whitelisted_events`](#whitelisted_events) setting.
 
-| Type:         | Disabled Actions:                                 |
-| ------------- | ------------------------------------------------- |
-| `comments`    | Commenting on Issues                              |
-| `create_repo` | Creating a new Repository                         |
-| `fork`        | Forking a Repository                              |
-| `issues`      | Opening or closing Issues                         |
-| `member`      | Getting added as a Collaborator/Member            |
-| `pr`          | Opening, closing or Merging a Pull request        |
-| `release`     | Publishing a new Release                          |
-| `review`      | Approving or requesting Changes in a Pull request |
-| `star`        | Starring a Repository                             |
-| `wiki`        | Creating a new Wiki page                          |
+| Type:          | Disabled Actions:                                 |
+| -------------- | ------------------------------------------------- |
+| `comments`     | Commenting on Issues                              |
+| `create_repo`  | Creating a new Repository                         |
+| `fork`         | Forking a Repository                              |
+| `issues`       | All Issues actions                                |
+| `issues_open`  | Opening Issues                                    |
+| `issues_close` | Closing Issues                                    |
+| `member`       | Getting added as a Collaborator/Member            |
+| `pr`           | All Pull request actions                          |
+| `pr_open`      | Opening a Pull request                            |
+| `pr_merge`     | Merging a Pull request                            |
+| `pr_close`     | Closing a Pull request                            |
+| `push`         | All commits performed                             |
+| `release`      | Publishing a new Release                          |
+| `review`       | Approving or requesting Changes in a Pull request |
+| `star`         | Starring a Repository                             |
+| `wiki`         | Creating a new Wiki page                          |
 
 #### `commit_name`
 > **Default:** `readme-bot`
@@ -203,7 +211,7 @@ A list of supported zones can be found [on Wikipedia][timezones]
 
 The `text` option in `date` allows you to set the text that should be displayed when the Activity list gets updated. The `{DATE}` placeholder can be used to insert the date and time of when the List was updated. The format for that can be changed through the [`format`](#dateformat) option mentioned below.
 
-To display this text will you need to place a `<!--RECENT_ACTIVITY:last_update-->` placeholder. The text will then be added below it.
+To display this text you will need to place a `<!--RECENT_ACTIVITY:last_update-->` placeholder. The text will then be added below it.
 
 #### `date.format`
 > **Default:** `dddd. mmmm dS, yyyy, h:MM:ss TT`
@@ -213,15 +221,43 @@ Supported are all options mentioned in the [dateformat NPM package][dateformat].
 
 Note that the `Z` cannot display the actual timezone such as `CET`/`CEST` but only timezones within the US (`EST`/`MDT`) or `GMT` with the offset appended to it (i.e. `GMT+0100`).
 
+#### `line_prefix`
+> **Default:** `{NUM}. `
+
+The `line_prefix` option is used to set the prefix for each line that shows activity.  
+The {NUM} placeholder is replaced by serial number for the activity line.
+
+#### `ignored_repos`
+> **Default:** `(empty list)`
+
+The `ignored_repos` option is used to ignore certain repositories and hide them from the recent activity.  
+The setting can be used in two ways:
+
+- **option 1:**  
+  ```yaml
+  settings:
+    ignored_repos: [username1/repo1, username1/repo2, username2/repo3]
+  ```
+
+- **Option 2:**  
+  ```yaml
+  settings:
+    whitelisted_events:
+    - username1/repo1
+    - username1/repo2
+    - username2/repo3
+  ```
+
+----
+**Notes about Placeholders:**  
+- Available Placeholders are: `{DATE}`, `{ID}`, `{FORK}`, `{REPO}`, `{URL}`, `{AMOUNT}`, `{WIKI}` and {NUM}
+- Each option only supports specific Placeholders which are mentioned in the `Supported Placeholders` section.
+- With the exception of `{AMOUNT}`, `{DATE}` and `{WIKI}`, all other placeholders will turn into embedded links (i.e. `{ID}` becomes `[#1](:url)`)
+  - `{ID}` and `{REPO}` can be used in [`url_text`](#url_text) and won't be turned into embedded links there. `{ID}` will still be prefixed with a `#`
+
 ----
 ### Messages
 The `messages` section contains all the different messages you can set for the Activity-List to display.
-
-**Notes about Placeholders:**  
-- Available Placeholders are: `{DATE}`, `{ID}`, `{FORK}`, `{REPO}`, `{URL}` and `{WIKI}`
-- Each option only supports specific Placeholders which are mentioned in the `Supported Placeholders` section.
-- With the exception of `{AMOUNT}`, `{DATE}` and `{WIKI}` will all placeholders be turned into embedded links (i.e. `{ID}` becomes `[#1](:url)`)
-  - `{ID}` and `{REPO}` can be used in [`url_text`](#url_text) and won't be turned into embedded links there. `{ID}` will still be prefixed with a `#`
 
 - [`added_member`](#added_member)
 - [`changes_approved`](#changes_approved)
@@ -236,6 +272,7 @@ The `messages` section contains all the different messages you can set for the A
 - [`pr_opened`](#pr_opened)
 - [`pr_closed`](#pr_closed)
 - [`pr_merged`](#pr_merged)
+- [`push`](#push)
 - [`wiki_create`](#wiki_create)
 
 #### `added_member`
@@ -362,6 +399,16 @@ This text is displayed whenever you close a Pull request without merging it.
 > - [`{URL}`](#url_text)
 
 This text is displayed whenever you merge a Pull request.
+
+#### `push`
+> **Default:** `⬆️ Pushed {AMOUNT} commit(s) to {REPO}`
+> 
+> **Supported Placeholders:**
+> - `{AMOUNT}`
+> - `{REPO}`
+
+This text is displayed whenever you make a commit to a repository.  
+`{AMOUNT}` will display the amount of commits performed.
 
 #### `wiki_create`
 > **Default:** `📖 Created new wiki page {WIKI} in {REPO}`

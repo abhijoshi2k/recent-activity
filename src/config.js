@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2020 James George
- * Copyright (c) 2021 The Readme-Workflows organisation and Contributors
+ * Copyright (c) 2023 The Readme-Workflows organisation and Contributors
  */
 
 const core = require("@actions/core");
@@ -20,7 +20,9 @@ const defaultVals = {
     text: "Last Updated: {DATE}",
     format: "dddd, mmmm dS, yyyy, h:MM:ss TT",
   },
+  ignored_repos: [],
   comments: "💬 Commented on {ID} in {REPO}",
+  push: "⬆️ Pushed {AMOUNT} commit(s) to {REPO}",
   issue_opened: "❗️ Opened issue {ID} in {REPO}",
   issue_closed: "✔️ Closed issue {ID} in {REPO}",
   pr_opened: "💪 Opened PR {ID} in {REPO}",
@@ -36,6 +38,7 @@ const defaultVals = {
   new_star: "⭐ Starred {REPO}",
   commit_name: "readme-bot",
   commit_email: "41898282+github-actions[bot]@users.noreply.github.com",
+  line_prefix: "{NUM}. ",
 };
 
 const userVals = parseYaml(core.getInput("CONFIG_FILE"));
